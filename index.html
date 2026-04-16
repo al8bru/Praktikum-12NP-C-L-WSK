@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Praktikum: Kondensator und Spule im Wechselstromkreis</title>
+  <style>
+    :root{
+      --bg1:#edf6f4; --bg2:#f7fbfa; --card:rgba(255,255,255,.92); --text:#12303a; --muted:#52646d;
+      --line:#d9e7e3; --sky:#e8f4f3; --sky-line:#c7e1db; --green:#edf7f2; --green-line:#cfe7d7;
+      --amber:#faf6ec; --amber-line:#eadbb6; --violet:#f2f1f8; --violet-line:#ddd9ee;
+      --cyan:#edf7f7; --cyan-line:#c8e6e3; --rose:#faf1f1; --rose-line:#ecd1d1;
+      --shadow:0 12px 32px rgba(18,48,58,.07);
+      --shadow-soft:0 6px 18px rgba(18,48,58,.05);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:linear-gradient(to bottom,var(--bg1),#fff,var(--bg2));
+    }
+    .wrap{max-width:1180px;margin:0 auto;padding:28px 16px 48px}
+    .card{background:var(--card);border:1px solid rgba(217,231,227,.95);border-radius:34px;box-shadow:var(--shadow);overflow:hidden;backdrop-filter:blur(10px)}
+    h1{font-size:clamp(2rem,4vw,3.3rem);line-height:1.08;margin:0 0 14px}
+    h2{font-size:clamp(1.45rem,2vw,2rem);margin:0}
+    h3{font-size:1.2rem;margin:0 0 12px}
+    p{line-height:1.9;color:var(--muted)}
+    .hero{padding:34px 32px;margin-bottom:22px;background:linear-gradient(135deg, rgba(244,250,248,.95), rgba(255,255,255,.92))}
+    .sticky-nav{
+      position:sticky; top:0; z-index:40; margin-bottom:24px;
+      background:linear-gradient(to bottom,rgba(238,247,255,.98),rgba(238,247,255,0));
+      padding:8px 0 14px;
+    }
+    .nav-inner{padding:16px 18px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px)}
+    .navgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+    .navbtn{
+      border:1px solid var(--line);border-radius:24px;background:#f8fafc;padding:18px;min-height:96px;
+      text-align:left;cursor:pointer;transition:.18s ease;box-shadow:0 2px 8px rgba(15,23,42,.04)
+    }
+    .navbtn:hover{background:linear-gradient(180deg,#ffffff,#eef6f4);transform:translateY(-1px)}
+    .navbtn.active{background:linear-gradient(135deg,#294955,#18323b);color:#fff;border-color:#21424d}
+    .navbtn .sub{display:block;font-size:14px;margin-top:6px;color:#64748b}
+    .navbtn.active .sub{color:#cbd5e1}
+    .section-head{padding:24px 28px;border-bottom:1px solid var(--line)}
+    .section-body{padding:24px 28px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+    .panel,.task,.tool,.question{border:1px solid var(--line);border-radius:26px;padding:22px;box-shadow:var(--shadow-soft)}
+    .tone-sky{background:var(--sky);border-color:var(--sky-line)}
+    .tone-green{background:var(--green);border-color:var(--green-line)}
+    .tone-amber{background:var(--amber);border-color:var(--amber-line)}
+    .tone-violet{background:var(--violet);border-color:var(--violet-line)}
+    .tone-cyan{background:var(--cyan);border-color:var(--cyan-line)}
+    .tone-rose{background:var(--rose);border-color:var(--rose-line)}
+    .formula{
+      margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 14px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:15px
+    }
+    ul,ol{margin:0;padding-left:24px;color:var(--muted)}
+    li{margin:10px 0;line-height:1.85}
+    .tasks-wrap{padding:0 24px 32px}
+    .tasks-title{font-size:1.5rem;font-weight:700;margin:0 0 18px}
+    .taskgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+    .task{background:linear-gradient(180deg,#fbfefd,#f4f8f7);padding:24px 26px}
+    .task-title{font-weight:700;margin-bottom:12px;line-height:1.8;font-size:1.04rem}
+    .task-text{color:var(--muted);line-height:2.05;font-size:1.04rem}
+    table{width:100%;border-collapse:separate;border-spacing:0 12px}
+    th,td{padding:14px 16px;text-align:left;vertical-align:top}
+    th{background:#eef5f3}
+    td{background:rgba(255,255,255,.92);border:1px solid var(--line);line-height:1.95;font-size:1.02rem}
+    tr > *:first-child{border-radius:16px 0 0 16px}
+    tr > *:last-child{border-radius:0 16px 16px 0}
+    .overflow{overflow:auto}
+    label{display:block;font-size:14px;font-weight:700;color:#334155;margin-bottom:8px}
+    input,select{
+      width:100%;border:1px solid #cbd5e1;border-radius:16px;padding:13px 14px;
+      font-size:16px;background:#fff;color:var(--text)
+    }
+    .result{margin-top:16px;background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:var(--shadow-soft)}
+    .big{font-size:1.8rem;font-weight:800;margin-top:6px}
+    .pill{display:inline-flex;padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:14px;color:#475569;font-weight:700;margin-right:8px}
+    .pill.topic{background:var(--sky);border-color:var(--sky-line);color:#075985}
+    .qtext{font-size:1.08rem;font-weight:700;margin:14px 0;line-height:1.8}
+    .quiz-options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .option{padding:13px 14px;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,.94);cursor:pointer;font-size:15px;text-align:left;transition:.18s ease}
+    .option.selected{background:linear-gradient(135deg,#294955,#18323b);color:#fff;border-color:#21424d}
+    .btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:16px;padding:13px 18px;cursor:pointer;font-weight:700;font-size:15px}
+    .btn-dark{background:#0f172a;color:#fff}
+    .btn-light{background:#fff;color:#0f172a;border:1px solid #cbd5e1}
+    .feedback{margin-top:14px;border-radius:16px;padding:14px;border:1px solid}
+    .ok{background:#ecfdf5;border-color:#86efac}
+    .bad{background:#fff1f2;border-color:#fca5a5}
+    .scorebox{background:var(--sky);border:1px solid var(--sky-line);border-radius:22px;padding:18px}
+    .hidden{display:none !important}
+    @media (max-width:1100px){
+      .navgrid{grid-template-columns:repeat(2,1fr)}
+      .grid-3,.grid-2,.taskgrid,.quiz-options{grid-template-columns:1fr}
+    }
+    @media (max-width:700px){
+      .wrap{padding:18px 12px 30px}
+      .hero,.section-head,.section-body,.tasks-wrap{padding-left:18px;padding-right:18px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="card hero">
+      <h1>Praktikum: Kondensator und Spule im Wechselstromkreis</h1>
+      <p>
+        Diese App ersetzt die Praktikumsanleitungen.<br>
+        Sie umfasst zwei Experimente: „Kondensator im Wechselstromkreis“ und „Spule im Wechselstromkreis“.<br>
+        Beide Bereiche enthalten den theoretischen Hintergrund, die Versuchsdurchführung und die Aufgabenstellungen.<br><br>
+        Am Ende der heutigen Praktikumssitzung solltest du dem Fachlehrer ein Messprotokoll samt fachgerecht erstelltem Diagramm vorlegen.
+      </p>
+    </header>
+
+    <div class="sticky-nav">
+      <section class="card">
+        <div class="nav-inner">
+          <div class="navgrid">
+            <button class="navbtn active" data-target="operatoren"><strong>Operatoren</strong><span class="sub">NRW-Operatoren im Überblick</span></button>
+            <button class="navbtn" data-target="kondensator"><strong>Experiment A</strong><span class="sub">Kondensator im Wechselstromkreis</span></button>
+            <button class="navbtn" data-target="spule"><strong>Experiment B</strong><span class="sub">Spule im Wechselstromkreis</span></button>
+            <button class="navbtn" data-target="vergleich"><strong>Vergleich</strong><span class="sub">X<sub>C</sub> und X<sub>L</sub> gegenüberstellen</span></button>
+            <button class="navbtn" data-target="quiz"><strong>Quiz</strong><span class="sub">Gemischte Wiederholung</span></button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <main>
+      <section id="operatoren" class="card">
+        <div class="section-head"><h2>Operatoren · Physik NRW Berufskolleg</h2></div>
+        <div class="section-body">
+          <div class="panel tone-sky" style="margin-bottom:24px; padding:24px 26px;">
+            <p style="font-size:1.05rem; line-height:2.05; margin:0;">In den Aufgabenstellungen dieser App kommen mehrere typische Operatoren vor.<br><br>Die Übersicht hilft dabei, die Arbeitsaufträge fachlich präzise zu verstehen und gezielt zu bearbeiten.</p>
+          </div>
+          <div class="overflow">
+            <table>
+              <thead>
+                <tr><th>Operator</th><th>Bedeutung</th><th>Bezug in dieser App</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>erläutern</strong></td><td>einen Sachverhalt fachsprachlich darstellen und dabei Zusammenhänge, Ursachen oder Wirkungen nachvollziehbar erklären</td><td>Grundlagen zu Blindwiderstand, Frequenzabhängigkeit und Phasenbeziehung erklären</td></tr>
+                <tr><td><strong>untersuchen</strong></td><td>einen Zusammenhang gezielt analysieren, Messwerte auswerten und daraus fachlich begründete Aussagen ableiten</td><td>Abhängigkeiten von X<sub>C</sub> beziehungsweise X<sub>L</sub> von f, C oder L erfassen</td></tr>
+                <tr><td><strong>darstellen</strong></td><td>Ergebnisse sachgerecht, übersichtlich und fachlich korrekt in Texten, Tabellen oder Diagrammen wiedergeben</td><td>Messreihen grafisch darstellen</td></tr>
+                <tr><td><strong>beschreiben</strong></td><td>Beobachtungen oder fachliche Zusammenhänge geordnet und präzise wiedergeben</td><td>Verläufe von Diagrammen und Zusammenhänge zwischen Größen beschreiben</td></tr>
+                <tr><td><strong>deuten</strong></td><td>fachliche Ergebnisse unter Rückgriff auf Modelle, Formeln oder Gesetzmäßigkeiten interpretieren</td><td>Kurvenverlauf und physikalische Bedeutung der Messergebnisse deuten</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="kondensator" class="card hidden">
+        <div class="section-head"><h2>Experiment A · Kondensator im Wechselstromkreis</h2><div class="time-line">Zeit: 45 Minuten</div></div>
+        <div class="section-body">
+          <div class="grid-3">
+            <div class="panel tone-sky">
+              <h3>Theoretischer Hintergrund</h3>
+              <p>Ein Kondensator stellt im Wechselstromkreis einen kapazitiven Blindwiderstand dar. Da sich die Polarität der Wechselspannung fortlaufend ändert, werden Ladungen ständig umgeladen. Je größer die Frequenz ist, desto häufiger geschieht dieser Umladevorgang pro Zeit und desto größer wird die Stromstärke.</p>
+              <p>Deshalb nimmt der kapazitive Blindwiderstand mit steigender Frequenz ab. Auch eine größere Kapazität ermöglicht mehr Ladungsverschiebung pro Zeit. Daher sinkt X<sub>C</sub> bei wachsender Kapazität.</p>
+              <div class="formula">X<sub>C</sub> = 1 / (2πfC)</div>
+            </div>
+            <div class="panel tone-green">
+              <h3>Versuchsdurchführung</h3>
+              <ol>
+                <li>Baue die angegebene Schaltung mit Generator, Vorwiderstand, Kondensator sowie Messgeräten für Strom und Spannung auf.</li>
+                <li>Halte die Generatorspannung konstant.</li>
+                <li>Untersuche zuerst die Abhängigkeit von X<sub>C</sub> von der Frequenz bei konstanter Kapazität.</li>
+                <li>Untersuche anschließend die Abhängigkeit von X<sub>C</sub> von der Kapazität bei konstanter Frequenz.</li>
+                <li>Berechne jeweils den Blindwiderstand über X<sub>C</sub> = U / I.</li>
+              </ol>
+            </div>
+            <div class="panel tone-amber">
+              <h3>Wichtige Hinweise</h3>
+              <ul>
+                <li>Minilab-Ausgänge nicht überlasten.</li>
+                <li>Die Spannung am Generator konstant halten.</li>
+                <li>Ohne Vorwiderstand können bei hohen Frequenzen zu große Ströme fließen.</li>
+                <li>Messwerte sauber tabellieren und Einheiten konsequent angeben.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="tasks-wrap">
+          <div class="tasks-title">Aufgabenstellungen</div>
+          <div class="taskgrid">
+            <div class="task"><div class="task-title">Aufgabe 1 – Grundlagen erläutern</div><div class="task-text">Erläutere, weshalb ein Kondensator im Wechselstromkreis einen kapazitiven Blindwiderstand besitzt.<br><br>Gehe dabei auch darauf ein, wie sich eine größere Kapazität auf die Stromstärke und auf den Blindwiderstand auswirkt.</div></div>
+            <div class="task"><div class="task-title">Aufgabe 2 – Messreihe: X<sub>C</sub> in Abhängigkeit von f</div><div class="task-text">Untersuche bei konstanter Kapazität C = 1 µF die Abhängigkeit des kapazitiven Blindwiderstands X<sub>C</sub> von der Frequenz f.<br><br>Nutze dazu Strom- und Spannungsmessungen.</div></div>
+            <div class="task"><div class="task-title">Aufgabe 3 – Messreihe: X<sub>C</sub> in Abhängigkeit von C</div><div class="task-text">Untersuche bei konstanter Frequenz f = 100 Hz die Abhängigkeit des kapazitiven Blindwiderstands X<sub>C</sub> von der Kapazität C.<br><br>Nutze dazu mehrere Kapazitätswerte, zum Beispiel 0,47 µF; 0,94 µF; 1,41 µF und 1,88 µF.</div></div>
+            <div class="task"><div class="task-title">Aufgabe 4 – Diagramme und Deutung</div><div class="task-text">Stelle beide Messreihen grafisch dar.<br><br>Beschreibe anschließend den jeweiligen Zusammenhang zwischen X<sub>C</sub> und f sowie zwischen X<sub>C</sub> und C.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="spule" class="card hidden">
+        <div class="section-head"><h2>Experiment B · Spule im Wechselstromkreis</h2><div class="time-line">Zeit: 45 Minuten</div></div>
+        <div class="section-body">
+          <div class="grid-3">
+            <div class="panel tone-violet">
+              <h3>Theoretischer Hintergrund</h3>
+              <p>Eine Spule besitzt im Wechselstromkreis einen induktiven Blindwiderstand. Ursache ist die Selbstinduktion: Änderungen der Stromstärke erzeugen eine Induktionsspannung, die der Stromänderung entgegenwirkt.</p>
+              <p>Deshalb nimmt der induktive Blindwiderstand mit steigender Frequenz zu. Ebenso wächst X<sub>L</sub> mit der Induktivität L. Charakteristisch ist außerdem, dass der Strom der Spannung an der Spule nacheilt.</p>
+              <div class="formula">X<sub>L</sub> = 2πfL</div>
+            </div>
+            <div class="panel tone-cyan">
+              <h3>Versuchsdurchführung</h3>
+              <ol>
+                <li>Baue die Schaltung mit Generator, Spule und Messgeräten für Strom und Spannung auf.</li>
+                <li>Betreibe das Minilab über den eingebauten Verstärker und halte die Spannung konstant.</li>
+                <li>Untersuche zuerst die Abhängigkeit von X<sub>L</sub> von der Frequenz bei konstanter Spule.</li>
+                <li>Untersuche anschließend die Abhängigkeit von X<sub>L</sub> von der Induktivität bei konstanter Frequenz.</li>
+                <li>Berechne jeweils den Blindwiderstand über X<sub>L</sub> = U / I.</li>
+              </ol>
+            </div>
+            <div class="panel tone-rose">
+              <h3>Wichtige Hinweise</h3>
+              <ul>
+                <li>Nur mit sauberem sinusförmigem Ausgangssignal messen.</li>
+                <li>Die ohmschen Widerstände der Spulen sind für die Grundauswertung zunächst vernachlässigt.</li>
+                <li>Für eine technische Vertiefung kann der Spulendrahtwiderstand zusätzlich berücksichtigt werden.</li>
+                <li>Die verwendeten Induktivitäten beziehungsweise Windungszahlen sorgfältig dokumentieren.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="tasks-wrap">
+          <div class="tasks-title">Aufgabenstellungen</div>
+          <div class="taskgrid">
+            <div class="task"><div class="task-title">Aufgabe 1 – Grundlagen erläutern</div><div class="task-text">Erläutere, weshalb eine Spule im Wechselstromkreis einen induktiven Blindwiderstand besitzt.<br><br>Gehe dabei auch darauf ein, warum der Strom gegenüber der Spannung nacheilt.</div></div>
+            <div class="task"><div class="task-title">Aufgabe 2 – Messreihe: X<sub>L</sub> in Abhängigkeit von f</div><div class="task-text">Untersuche bei konstanter Spule die Abhängigkeit des induktiven Blindwiderstands X<sub>L</sub> von der Frequenz f.<br><br>Nutze dazu Strom- und Spannungsmessungen.</div></div>
+            <div class="task"><div class="task-title">Aufgabe 3 – Messreihe: X<sub>L</sub> in Abhängigkeit von L</div><div class="task-text">Untersuche bei konstanter Frequenz f = 1000 Hz die Abhängigkeit des induktiven Blindwiderstands X<sub>L</sub> von der Induktivität L.<br><br>Nutze dazu mehrere Spulen mit unterschiedlicher Windungszahl beziehungsweise Induktivität.</div></div>
+            <div class="task"><div class="task-title">Aufgabe 4 – Diagramme und Deutung</div><div class="task-text">Stelle beide Messreihen grafisch dar.<br><br>Beschreibe anschließend den jeweiligen Zusammenhang zwischen X<sub>L</sub> und f sowie zwischen X<sub>L</sub> und L.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="vergleich" class="card hidden">
+        <div class="section-head"><h2>Vergleich · Kondensator und Spule gegenüberstellen</h2></div>
+        <div class="section-body overflow">
+          <table>
+            <thead><tr><th>Aspekt</th><th>Kondensator</th><th>Spule</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Blindwiderstand</strong></td><td>X<sub>C</sub> = 1 / (2πfC)</td><td>X<sub>L</sub> = 2πfL</td></tr>
+              <tr><td><strong>Einfluss der Frequenz</strong></td><td>X<sub>C</sub> sinkt bei wachsendem f</td><td>X<sub>L</sub> steigt bei wachsendem f</td></tr>
+              <tr><td><strong>Einfluss der Bauteilgröße</strong></td><td>größeres C → kleineres X<sub>C</sub></td><td>größeres L → größeres X<sub>L</sub></td></tr>
+              <tr><td><strong>Phasenbeziehung</strong></td><td>Strom eilt der Spannung voraus</td><td>Strom eilt der Spannung nach</td></tr>
+              <tr><td><strong>Geeignete Darstellung</strong></td><td>X<sub>C</sub> gegen 1/f</td><td>X<sub>L</sub> gegen f</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="section-body" style="border-top:1px solid var(--line);">
+          <div class="grid-2">
+            <div class="tool">
+              <h3>Blindwiderstand aus Messwerten</h3>
+              <div class="grid-2">
+                <div><label for="u">Spannung U in V</label><input id="u" type="number" step="any" value="6"></div>
+                <div><label for="i">Strom I in A</label><input id="i" type="number" step="any" value="0.015"></div>
+              </div>
+              <div class="result">
+                <div style="color:#64748b">Berechneter Blindwiderstand</div>
+                <div class="big" id="impedanceResult">–</div>
+                <div style="color:#475569;margin-top:12px;">Formel: X = U / I</div>
+              </div>
+            </div>
+            <div class="tool">
+              <h3>Formeltrainer</h3>
+              <div class="grid-2">
+                <div><label for="mode">Formel</label><select id="mode"><option value="xc">X_C berechnen</option><option value="xl">X_L berechnen</option></select></div>
+                <div><label for="freq">Frequenz f in Hz</label><input id="freq" type="number" step="any" value="100"></div>
+                <div><label for="cap">Kapazität C in µF</label><input id="cap" type="number" step="any" value="1"></div>
+                <div><label for="ind">Induktivität L in H</label><input id="ind" type="number" step="any" value="0.2"></div>
+              </div>
+              <div class="result">
+                <div style="color:#64748b">Ergebnis</div>
+                <div class="big" id="formulaResult">–</div>
+                <div style="color:#475569;margin-top:12px;" id="formulaInfo"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="quiz" class="card hidden">
+        <div class="section-head"><h2>Quiz · Beide Themen zusammen</h2><p>Dieser Quizbereich verbindet Inhalte zum Kondensator und zur Spule im Wechselstromkreis.</p></div>
+        <div class="section-body">
+          <div id="quizStart" class="panel tone-sky">
+            <h3>20 gemischte Fragen</h3>
+            <p>Enthalten sind Multiple-Choice-Fragen und kurze Formeleingaben zu beiden Experimenten.<br><br><strong>Zeitangabe: 15 Minuten</strong></p>
+            <button class="btn btn-dark" onclick="startQuiz()">Quiz starten</button>
+          </div>
+          <div id="quizArea" class="hidden"></div>
+          <div id="quizControls" class="hidden" style="margin-top:20px;">
+            <button class="btn btn-dark" onclick="submitQuiz()">Quiz auswerten</button>
+            <button class="btn btn-light" onclick="resetQuiz()" style="margin-left:10px;">Zurücksetzen</button>
+          </div>
+          <div id="quizScore" class="scorebox hidden" style="margin-top:20px;"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const sections = ["operatoren","kondensator","spule","vergleich","quiz"];
+    const navButtons = Array.from(document.querySelectorAll(".navbtn"));
+
+    function showSection(id){
+      sections.forEach(sectionId => {
+        document.getElementById(sectionId).classList.toggle("hidden", sectionId !== id);
+      });
+      navButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.target === id);
+      });
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    navButtons.forEach(btn => btn.addEventListener("click", () => showSection(btn.dataset.target)));
+
+    function calculateImpedance(voltage, current){
+      const U = Number(voltage), I = Number(current);
+      if(!Number.isFinite(U) || !Number.isFinite(I) || I === 0) return null;
+      return U / I;
+    }
+    function calculateXc(frequency, capMicro){
+      const f = Number(frequency), c = Number(capMicro);
+      if(!Number.isFinite(f) || !Number.isFinite(c) || f <= 0 || c <= 0) return null;
+      return 1 / (2 * Math.PI * f * c * 1e-6);
+    }
+    function calculateXl(frequency, ind){
+      const f = Number(frequency), l = Number(ind);
+      if(!Number.isFinite(f) || !Number.isFinite(l) || f <= 0 || l <= 0) return null;
+      return 2 * Math.PI * f * l;
+    }
+    function updateTools(){
+      const imp = calculateImpedance(document.getElementById("u").value, document.getElementById("i").value);
+      document.getElementById("impedanceResult").textContent = imp === null ? "–" : imp.toFixed(2) + " Ω";
+      const mode = document.getElementById("mode").value;
+      let res = null;
+      if(mode === "xc"){
+        res = calculateXc(document.getElementById("freq").value, document.getElementById("cap").value);
+        document.getElementById("formulaInfo").innerHTML = "Es wird mit X<sub>C</sub> = 1 / (2πfC) gerechnet.";
+      } else {
+        res = calculateXl(document.getElementById("freq").value, document.getElementById("ind").value);
+        document.getElementById("formulaInfo").innerHTML = "Es wird mit X<sub>L</sub> = 2πfL gerechnet.";
+      }
+      document.getElementById("formulaResult").textContent = res === null ? "–" : res.toFixed(2) + " Ω";
+    }
+    ["u","i","mode","freq","cap","ind"].forEach(id => document.getElementById(id).addEventListener("input", updateTools));
+    updateTools();
+
+    function normalizeAnswer(value){
+      return String(value ?? "").replace(/\s+/g,"").toLowerCase();
+    }
+
+    const quizQuestions = [
+      {type:"mc", topic:"Kondensator", question:"Wie verändert sich der kapazitive Blindwiderstand X<sub>C</sub> bei steigender Frequenz?", options:["XC steigt","XC sinkt","XC bleibt konstant","XC wird null unabhängig von C"], answer:"XC sinkt", explanation:"Für den Kondensator gilt: X<sub>C</sub> = 1 / (2πfC). Mit steigender Frequenz wird X<sub>C</sub> kleiner."},
+      {type:"mc", topic:"Spule", question:"Wie verändert sich der induktive Blindwiderstand X<sub>L</sub> bei steigender Frequenz?", options:["XL sinkt","XL bleibt konstant","XL steigt","XL wird negativ"], answer:"XL steigt", explanation:"Für die Spule gilt: X<sub>L</sub> = 2πfL. Mit wachsender Frequenz wächst auch X<sub>L</sub>."},
+      {type:"mc", topic:"Phasenbeziehung", question:"Welche Aussage ist richtig?", options:["Beim Kondensator eilt der Strom der Spannung nach.","Bei der Spule eilt der Strom der Spannung voraus.","Beim Kondensator eilt der Strom der Spannung voraus.","Bei beiden Bauteilen sind Strom und Spannung immer phasengleich."], answer:"Beim Kondensator eilt der Strom der Spannung voraus.", explanation:"Beim Kondensator ist der Strom vorauseilend, bei der Spule nacheilend."},
+      {type:"input", topic:"Kondensator", question:"Ergänze die Formel für den kapazitiven Blindwiderstand: X<sub>C</sub> = ?", answer:"1/(2πfC)", accepted:["1/(2πfC)","1 / (2πfC)","1/(2*pi*f*C)","1/(2 pi f C)","1/(2π·f·C)"], explanation:"Der kapazitive Blindwiderstand ist umgekehrt proportional zu Frequenz und Kapazität."},
+      {type:"input", topic:"Spule", question:"Ergänze die Formel für den induktiven Blindwiderstand: X<sub>L</sub> = ?", answer:"2πfL", accepted:["2πfL","2*pi*f*L","2 π f L","2π·f·L"], explanation:"Der induktive Blindwiderstand ist proportional zu Frequenz und Induktivität."},
+      {type:"mc", topic:"Messung", question:"Wie bestimmt man im Versuch den Blindwiderstand eines Bauteils?", options:["Mit X = U · I","Mit X = U / I","Mit X = I / U","Mit X = P / U"], answer:"Mit X = U / I", explanation:"Aus gemessener Spannung und Stromstärke ergibt sich der Wechselstromwiderstand über X = U / I."},
+      {type:"mc", topic:"Auswertung", question:"Welche Darstellung ist für den Kondensator besonders geeignet?", options:["XC gegen f","XC gegen 1/f","XC gegen U","XC gegen I²"], answer:"XC gegen 1/f", explanation:"Da X<sub>C</sub> proportional zu 1/f ist, ergibt X<sub>C</sub> gegen 1/f eine Gerade."},
+      {type:"mc", topic:"Auswertung", question:"Welche Darstellung ist für die Spule besonders geeignet?", options:["XL gegen 1/f","XL gegen f","XL gegen U","XL gegen 1/L"], answer:"XL gegen f", explanation:"Da X<sub>L</sub> proportional zu f ist, ergibt X<sub>L</sub> gegen f direkt eine Gerade."},
+      {type:"mc", topic:"Kondensator", question:"Wie wirkt sich eine größere Kapazität C auf X<sub>C</sub> aus?", options:["XC wird größer","XC wird kleiner","XC bleibt konstant","XC wird negativ"], answer:"XC wird kleiner", explanation:"Mit wachsender Kapazität sinkt der kapazitive Blindwiderstand X<sub>C</sub>."},
+      {type:"mc", topic:"Spule", question:"Wie wirkt sich eine größere Induktivität L auf X<sub>L</sub> aus?", options:["XL wird kleiner","XL wird größer","XL bleibt konstant","XL wird null"], answer:"XL wird größer", explanation:"Mit wachsender Induktivität steigt der induktive Blindwiderstand X<sub>L</sub>."},
+      {type:"mc", topic:"Phasenbeziehung", question:"Welche Aussage zur Spule ist richtig?", options:["Der Strom eilt voraus.","Der Strom nacheilt der Spannung.","Strom und Spannung sind immer gleich groß.","Die Frequenz spielt keine Rolle."], answer:"Der Strom nacheilt der Spannung.", explanation:"An der Spule nacheilt der Strom der Spannung."},
+      {type:"mc", topic:"Phasenbeziehung", question:"Welche Aussage zum Kondensator ist richtig?", options:["Der Strom nacheilt der Spannung.","Der Strom eilt der Spannung voraus.","Strom und Spannung sind immer phasengleich.","Die Kapazität hat keinen Einfluss."], answer:"Der Strom eilt der Spannung voraus.", explanation:"Beim Kondensator ist der Strom vorauseilend."},
+      {type:"input", topic:"Messung", question:"Welche Formel nutzt du im Versuch zur Berechnung des Blindwiderstands aus Messwerten?", answer:"X=U/I", accepted:["X=U/I","X = U / I","u/i","X=U÷I"], explanation:"Im Versuch wird der Blindwiderstand über Spannung geteilt durch Strom bestimmt."},
+      {type:"mc", topic:"Vergleich", question:"Welches Bauteil zeigt bei steigender Frequenz einen kleineren Blindwiderstand?", options:["Nur die Spule","Nur der Kondensator","Beide","Keines von beiden"], answer:"Nur der Kondensator", explanation:"Beim Kondensator sinkt X<sub>C</sub> mit steigender Frequenz, bei der Spule steigt X<sub>L</sub>."},
+      {type:"mc", topic:"Darstellung", question:"Welche Darstellung führt beim Kondensator zu einer Geraden?", options:["XC gegen 1/f","XC gegen f","XC gegen U","XC gegen I²"], answer:"XC gegen 1/f", explanation:"Da X<sub>C</sub> antiproportional zu f ist, wird X<sub>C</sub> gegen 1/f linear."},
+      {type:"mc", topic:"Darstellung", question:"Welche Darstellung führt bei der Spule direkt zu einer Geraden?", options:["XL gegen 1/f","XL gegen f","XL gegen U","XL gegen 1/L"], answer:"XL gegen f", explanation:"Da X<sub>L</sub> proportional zu f ist, ergibt X<sub>L</sub> gegen f eine Gerade."},
+      {type:"mc", topic:"Sicherheit", question:"Warum wird im Kondensatorversuch ein Vorwiderstand verwendet?", options:["Damit die Frequenz sinkt","Zur Strombegrenzung und zum Schutz der Bauteile","Damit die Kapazität größer wird","Damit keine Spannung mehr anliegt"], answer:"Zur Strombegrenzung und zum Schutz der Bauteile", explanation:"Der Vorwiderstand schützt die Quelle und begrenzt zu große Ströme."},
+      {type:"mc", topic:"Verdopplung", question:"Was passiert mit X<sub>C</sub>, wenn die Frequenz verdoppelt wird?", options:["X<sub>C</sub> verdoppelt sich","X<sub>C</sub> halbiert sich","X<sub>C</sub> bleibt gleich","X<sub>C</sub> wird viermal so groß"], answer:"X<sub>C</sub> halbiert sich", explanation:"Da X<sub>C</sub> = 1 / (2πfC) gilt, führt eine Verdopplung der Frequenz zu einer Halbierung von X<sub>C</sub>."},
+      {type:"mc", topic:"Halbierung", question:"Was passiert mit X<sub>C</sub>, wenn die Kapazität halbiert wird?", options:["X<sub>C</sub> halbiert sich","X<sub>C</sub> verdoppelt sich","X<sub>C</sub> bleibt gleich","X<sub>C</sub> wird null"], answer:"X<sub>C</sub> verdoppelt sich", explanation:"Da X<sub>C</sub> umgekehrt proportional zu C ist, verdoppelt sich X<sub>C</sub> bei halbierter Kapazität."},
+      {type:"mc", topic:"Verdopplung", question:"Was passiert mit X<sub>L</sub>, wenn die Induktivität verdoppelt wird?", options:["X<sub>L</sub> halbiert sich","X<sub>L</sub> verdoppelt sich","X<sub>L</sub> bleibt gleich","X<sub>L</sub> wird negativ"], answer:"X<sub>L</sub> verdoppelt sich", explanation:"Da X<sub>L</sub> = 2πfL gilt, führt eine Verdopplung der Induktivität zu einer Verdopplung von X<sub>L</sub>."}
+    ];
+
+    let quizStarted = false, quizSubmitted = false;
+    const quizAnswers = {};
+
+    function renderLabel(label){
+      const map = {
+        "XC steigt":"X<sub>C</sub> steigt",
+        "XC sinkt":"X<sub>C</sub> sinkt",
+        "XC bleibt konstant":"X<sub>C</sub> bleibt konstant",
+        "XC wird null unabhängig von C":"X<sub>C</sub> wird null unabhängig von C",
+        "XL sinkt":"X<sub>L</sub> sinkt",
+        "XL bleibt konstant":"X<sub>L</sub> bleibt konstant",
+        "XL steigt":"X<sub>L</sub> steigt",
+        "XL wird negativ":"X<sub>L</sub> wird negativ",
+        "XC gegen f":"X<sub>C</sub> gegen f",
+        "XC gegen 1/f":"X<sub>C</sub> gegen 1/f",
+        "XC gegen U":"X<sub>C</sub> gegen U",
+        "XC gegen I²":"X<sub>C</sub> gegen I²",
+        "XC wird größer":"X<sub>C</sub> wird größer",
+        "XC wird kleiner":"X<sub>C</sub> wird kleiner",
+        "XC wird negativ":"X<sub>C</sub> wird negativ",
+        "XL gegen 1/f":"X<sub>L</sub> gegen 1/f",
+        "XL gegen f":"X<sub>L</sub> gegen f",
+        "XL gegen U":"X<sub>L</sub> gegen U",
+        "XL gegen 1/L":"X<sub>L</sub> gegen 1/L",
+        "XL wird kleiner":"X<sub>L</sub> wird kleiner",
+        "XL wird größer":"X<sub>L</sub> wird größer",
+        "XL wird null":"X<sub>L</sub> wird null"
+      };
+      return map[label] || label;
+    }
+    function isCorrectAnswer(question, value){
+      if(!value) return false;
+      if(question.type === "mc") return value === question.answer;
+      const normalized = normalizeAnswer(value);
+      const accepted = (question.accepted || [question.answer]).map(normalizeAnswer);
+      return accepted.includes(normalized);
+    }
+    function renderQuiz(){
+      const area = document.getElementById("quizArea");
+      area.innerHTML = "";
+      quizQuestions.forEach((q,index)=>{
+        const wrap = document.createElement("div");
+        wrap.className = "question";
+
+        const pills = document.createElement("div");
+        pills.innerHTML = `<span class="pill">Frage ${index+1}</span><span class="pill topic">${q.topic}</span>`;
+        wrap.appendChild(pills);
+
+        const qtext = document.createElement("div");
+        qtext.className = "qtext";
+        qtext.innerHTML = q.question;
+        wrap.appendChild(qtext);
+
+        if(q.type === "mc"){
+          const box = document.createElement("div");
+          box.className = "quiz-options";
+          q.options.forEach(option=>{
+            const btn = document.createElement("button");
+            btn.className = "option" + (quizAnswers[index] === option ? " selected" : "");
+            btn.innerHTML = renderLabel(option);
+            btn.onclick = ()=>{ quizAnswers[index] = option; renderQuiz(); };
+            box.appendChild(btn);
+          });
+          wrap.appendChild(box);
+        } else {
+          const input = document.createElement("input");
+          input.type = "text";
+          input.placeholder = "Antwort eingeben";
+          input.value = quizAnswers[index] || "";
+          input.oninput = (e)=>{ quizAnswers[index] = e.target.value; };
+          wrap.appendChild(input);
+        }
+
+        if(quizSubmitted){
+          const correct = isCorrectAnswer(q, quizAnswers[index]);
+          const fb = document.createElement("div");
+          fb.className = "feedback " + (correct ? "ok" : "bad");
+          fb.innerHTML = `<strong>${correct ? "Richtig" : "Noch nicht richtig"}</strong><div style="margin-top:10px; line-height:1.8;">${q.explanation}</div>`;
+          wrap.appendChild(fb);
+        }
+
+        area.appendChild(wrap);
+      });
+    }
+
+
+    function startQuiz(){
+      quizStarted = true;
+      quizSubmitted = false;
+      document.getElementById("quizStart").classList.add("hidden");
+      document.getElementById("quizArea").classList.remove("hidden");
+      document.getElementById("quizControls").classList.remove("hidden");
+      document.getElementById("quizScore").classList.add("hidden");
+      renderQuiz();
+    }
+    function submitQuiz(){
+      quizSubmitted = true;
+      renderQuiz();
+      const score = quizQuestions.reduce((sum,q,i)=>sum + (isCorrectAnswer(q, quizAnswers[i]) ? 1 : 0), 0);
+      const box = document.getElementById("quizScore");
+      box.classList.remove("hidden");
+      box.innerHTML = `<div class="big">Ergebnis: ${score} von ${quizQuestions.length}</div>`
+        + `<div style="margin-top:14px; font-size:1.08rem; line-height:1.9; color:#334155; font-weight:700;">Zeig den Score deinem Lehrer.</div>`;
+    }
+    function resetQuiz(){
+      Object.keys(quizAnswers).forEach(k => delete quizAnswers[k]);
+      quizSubmitted = false;
+      document.getElementById("quizScore").classList.add("hidden");
+      if(quizStarted){
+        renderQuiz();
+      }
+    }
+
+    showSection("operatoren");
+  </script>
+</body>
+</html>
