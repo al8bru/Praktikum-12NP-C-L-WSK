@@ -314,7 +314,7 @@
       navButtons.forEach(btn => {
         btn.classList.toggle("active", btn.dataset.target === id);
       });
-      window.scrollTo({top:0, behavior:"smooth"});
+      window.scrollTo({top:0, behavior:"auto"});
     }
 
     navButtons.forEach(btn => btn.addEventListener("click", () => showSection(btn.dataset.target)));
