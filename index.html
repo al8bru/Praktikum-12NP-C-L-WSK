@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Praktikum: Kondensator und Spule im Wechselstromkreis</title>
+  <style>
+    :root{
+      --bg1:#eef7ff; --bg2:#f8fbff; --card:#ffffff; --text:#0f172a; --muted:#475569;
+      --line:#dbe5f0; --sky:#e0f2fe; --sky-line:#bae6fd; --green:#ecfdf5; --green-line:#a7f3d0;
+      --amber:#fffbeb; --amber-line:#fde68a; --violet:#f5f3ff; --violet-line:#ddd6fe;
+      --cyan:#ecfeff; --cyan-line:#a5f3fc; --rose:#fff1f2; --rose-line:#fecdd3;
+      --shadow:0 8px 24px rgba(15,23,42,.06);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);background:linear-gradient(to bottom,var(--bg1),#fff,var(--bg2));}
+    .wrap{max-width:1180px;margin:0 auto;padding:24px 16px 40px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow);overflow:hidden}
+    h1{font-size:clamp(2rem,4vw,3.3rem);line-height:1.08;margin:0 0 14px}
+    h2{font-size:clamp(1.45rem,2vw,2rem);margin:0}
+    h3{font-size:1.2rem;margin:0 0 12px}
+    p{line-height:1.9;color:var(--muted)}
+    .hero{padding:28px;margin-bottom:20px}
+    .sticky-nav{position:sticky;top:0;z-index:40;margin-bottom:24px;background:linear-gradient(to bottom,rgba(238,247,255,.98),rgba(238,247,255,0));padding:8px 0 14px}
+    .nav-inner{padding:16px 18px;background:rgba(255,255,255,.96);backdrop-filter:blur(8px)}
+    .navgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+    .navbtn{border:1px solid var(--line);border-radius:24px;background:#f8fafc;padding:18px;min-height:96px;text-align:left;cursor:pointer;transition:.18s ease;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+    .navbtn:hover{background:#f1f5f9}
+    .navbtn.active{background:#0f172a;color:#fff;border-color:#0f172a}
+    .navbtn .sub{display:block;font-size:14px;margin-top:6px;color:#64748b}
+    .navbtn.active .sub{color:#cbd5e1}
+    .section-head{padding:24px 28px;border-bottom:1px solid var(--line)}
+    .section-body{padding:24px 28px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+    .panel,.task,.tool,.question{border:1px solid var(--line);border-radius:24px;padding:20px}
+    .tone-sky{background:var(--sky);border-color:var(--sky-line)}
+    .tone-green{background:var(--green);border-color:var(--green-line)}
+    .tone-amber{background:var(--amber);border-color:var(--amber-line)}
+    .tone-violet{background:var(--violet);border-color:var(--violet-line)}
+    .tone-cyan{background:var(--cyan);border-color:var(--cyan-line)}
+    .tone-rose{background:var(--rose);border-color:var(--rose-line)}
+    .formula{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 14px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:15px}
+    ul,ol{margin:0;padding-left:24px;color:var(--muted)}
+    li{margin:10px 0;line-height:1.85}
+    .tasks-wrap{padding:0 24px 32px}
+    .tasks-title{font-size:1.5rem;font-weight:700;margin:0 0 18px}
+    .taskgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px}
+    .task{background:#f8fafc;padding:24px 26px}
+    .task-title{font-weight:700;margin-bottom:12px;line-height:1.8;font-size:1.04rem}
+    .task-text{color:var(--muted);line-height:2.05;font-size:1.04rem}
+    table{width:100%;border-collapse:separate;border-spacing:0 12px}
+    th,td{padding:14px 16px;text-align:left;vertical-align:top}
+    th{background:#f1f5f9}
+    td{background:#fff;border:1px solid var(--line);line-height:1.95;font-size:1.02rem}
+    tr > *:first-child{border-radius:16px 0 0 16px}
+    tr > *:last-child{border-radius:0 16px 16px 0}
+    .overflow{overflow:auto}
+    label{display:block;font-size:14px;font-weight:700;color:#334155;margin-bottom:8px}
+    input,select{width:100%;border:1px solid #cbd5e1;border-radius:16px;padding:13px 14px;font-size:16px;background:#fff;color:var(--text)}
+    .result{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .big{font-size:1.8rem;font-weight:800;margin-top:6px}
+    .pill{display:inline-flex;padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:14px;color:#475569;font-weight:700;margin-right:8px}
+    .pill.topic{background:var(--sky);border-color:var(--sky-line);color:#075985}
+    .qtext{font-size:1.08rem;font-weight:700;margin:14px 0;line-height:1.8}
+    .quiz-options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .option{padding:13px 14px;border-radius:16px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:15px;text-align:left}
+    .option.selected{background:#0f172a;color:#fff;border-color:#0f172a}
+    .btn{display:inline-flex;align-items:center;justify-content:center;border:none;border-radius:16px;padding:13px 18px;cursor:pointer;font-weight:700;font-size:15px}
+    .btn-dark{background:#0f172a;color:#fff}.btn-light{background:#fff;color:#0f172a;border:1px solid #cbd5e1}
+    .feedback{margin-top:14px;border-radius:16px;padding:14px;border:1px solid}.ok{background:#ecfdf5;border-color:#86efac}.bad{background:#fff1f2;border-color:#fca5a5}
+    .scorebox{background:var(--sky);border:1px solid var(--sky-line);border-radius:22px;padding:18px}.hidden{display:none !important}
+    @media (max-width:1100px){.navgrid{grid-template-columns:repeat(2,1fr)}.grid-3,.grid-2,.taskgrid,.quiz-options{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="card hero">
+      <h1>Praktikum: Kondensator und Spule im Wechselstromkreis</h1>
+      <p>Diese App ersetzt die Praktikumsanleitungen.<br>Sie umfasst zwei Experimente: „Kondensator im Wechselstromkreis“ und „Spule im Wechselstromkreis“.<br>Beide Bereiche enthalten den theoretischen Hintergrund, die Versuchsdurchführung und die Aufgabenstellungen.<br><br>Am Ende der heutigen Praktikumssitzung solltest du dem Fachlehrer ein Messprotokoll samt fachgerecht erstelltem Diagramm vorlegen.</p>
+    </header>
+    <div class="sticky-nav">
+      <section class="card"><div class="nav-inner"><div class="navgrid">
+        <button class="navbtn active" data-target="operatoren"><strong>Operatoren</strong><span class="sub">NRW-Operatoren im Überblick</span></button>
+        <button class="navbtn" data-target="kondensator"><strong>Experiment A</strong><span class="sub">Kondensator im Wechselstromkreis</span></button>
+        <button class="navbtn" data-target="spule"><strong>Experiment B</strong><span class="sub">Spule im Wechselstromkreis</span></button>
+        <button class="navbtn" data-target="vergleich"><strong>Vergleich</strong><span class="sub">X<sub>C</sub> und X<sub>L</sub> gegenüberstellen</span></button>
+        <button class="navbtn" data-target="quiz"><strong>Quiz</strong><span class="sub">Gemischte Wiederholung</span></button>
+      </div></div></section>
+    </div>
+    <main>
+      <section id="operatoren" class="card">
+        <div class="section-head"><h2>Operatoren · Physik NRW Berufskolleg</h2></div>
+        <div class="section-body">
+          <div class="panel tone-sky" style="margin-bottom:24px; padding:24px 26px;">
+            <p style="font-size:1.05rem; line-height:2.05; margin:0;">In den Aufgabenstellungen dieser App kommen mehrere typische Operatoren vor.<br><br>Die Übersicht hilft dabei, die Arbeitsaufträge fachlich präzise zu verstehen und gezielt zu bearbeiten.</p>
+          </div>
+          <div class="overflow"><table><thead><tr><th>Operator</th><th>Bedeutung</th><th>Bezug in dieser App</th></tr></thead><tbody>
+            <tr><td><strong>erläutern</strong></td><td>einen Sachverhalt fachsprachlich darstellen und dabei Zusammenhänge, Ursachen oder Wirkungen nachvollziehbar erklären</td><td>Grundlagen zu Blindwiderstand, Frequenzabhängigkeit und Phasenbeziehung erklären</td></tr>
+            <tr><td><strong>untersuchen</strong></td><td>einen Zusammenhang gezielt analysieren, Messwerte auswerten und daraus fachlich begründete Aussagen ableiten</td><td>Abhängigkeiten von X<sub>C</sub> beziehungsweise X<sub>L</sub> von f, C oder L erfassen</td></tr>
+            <tr><td><strong>darstellen</strong></td><td>Ergebnisse sachgerecht, übersichtlich und fachlich korrekt in Texten, Tabellen oder Diagrammen wiedergeben</td><td>Messreihen grafisch darstellen</td></tr>
+            <tr><td><strong>beschreiben</strong></td><td>Beobachtungen oder fachliche Zusammenhänge geordnet und präzise wiedergeben</td><td>Verläufe von Diagrammen und Zusammenhänge zwischen Größen beschreiben</td></tr>
+            <tr><td><strong>deuten</strong></td><td>fachliche Ergebnisse unter Rückgriff auf Modelle, Formeln oder Gesetzmäßigkeiten interpretieren</td><td>Kurvenverlauf und physikalische Bedeutung der Messergebnisse deuten</td></tr>
+          </tbody></table></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
